@@ -1,0 +1,8 @@
+murders_df = pd.read_csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/murder_2016/murder_2015_final.csv")
+murders_df.apply(lambda x: (x.min(), x.max()))
+
+print(len(murders_df["state"].unique()))
+
+states_df= pd.DataFrame(murders_df.groupby("state").apply(lambda x: x.mean()))
+states_df.apply(lambda x: (x.min(), x.max()))
+
