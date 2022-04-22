@@ -1,0 +1,26 @@
+#Trying to replicate: https://www.reddit.com/r/dataisbeautiful/comments/q7gqms/usa_religious_preference_trends_over_70_years_oc/hgifc5e/
+
+
+read= pd.read_html("https://news.gallup.com/poll/1690/religion.aspx")
+religi=pd.DataFrame(read[0])
+
+religion= religi.iloc[:73,:8]
+
+religion.columns = religion.columns.droplevel(1)
+
+religion= religion.rename(columns={'Unnamed: 0_level_0': 'Year'})
+
+religion.set_index("Year", inplace=True)
+
+for col in [ "Protestant", "Christian (nonspecific)", "Catholic", "Jewish", "Mormon","Other","None" ]:
+    religion[col] = pd.to_numeric(religion[col],errors="coerce")
+    
+religion["Christian"]= religion[["Protestant", "Christian (nonspecific)", "Catholic", "Mormon"]].sum(axis=1)
+
+religion["Christian"].fillna(value=religion["Christian"].mean(), inplace=True)
+
+religion[["Christian", "Jewish","Other","None"]].plot(figsize=(8, 8)).invert_xaxis()
+plt.ylabel("Percent (%)")
+plt.ylim((0,100))
+plt.grid(axis='y')
+plt.show()
